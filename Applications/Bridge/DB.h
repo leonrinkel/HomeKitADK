@@ -23,7 +23,7 @@ extern "C" {
 /**
  * Total number of services and characteristics contained in the accessory.
  */
-#define kAttributeCount ((size_t) 30)
+#define kAttributeCount ((size_t) 29)
 
 /**
  * HomeKit Accessory Information service.
@@ -51,7 +51,6 @@ extern const HAPStringCharacteristic lightBulbAccessoryInformationNameCharacteri
 extern const HAPStringCharacteristic lightBulbAccessoryInformationSerialNumberCharacteristic;
 extern const HAPStringCharacteristic lightBulbAccessoryInformationFirmwareRevisionCharacteristic;
 extern const HAPStringCharacteristic lightBulbAccessoryInformationHardwareRevisionCharacteristic;
-extern const HAPStringCharacteristic lightBulbAccessoryInformationADKVersionCharacteristic;
 
 /**
  * HAP Protocol Information service.

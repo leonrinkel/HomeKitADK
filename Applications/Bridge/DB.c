@@ -34,7 +34,6 @@
 #define kIID_LightBulbAccessoryInformationSerialNumber     ((uint64_t) 0x1006)
 #define kIID_LightBulbAccessoryInformationFirmwareRevision ((uint64_t) 0x1007)
 #define kIID_LightBulbAccessoryInformationHardwareRevision ((uint64_t) 0x1008)
-#define kIID_LightBulbAccessoryInformationADKVersion       ((uint64_t) 0x1009)
 #define kIID_LightBulbAccessoryInformationProductData      ((uint64_t) 0x100A)
 
 #define kIID_HAPProtocolInformation                 ((uint64_t) 0x0010)
@@ -52,7 +51,7 @@
 #define kIID_LightBulbName             ((uint64_t) 0x0032)
 #define kIID_LightBulbOn               ((uint64_t) 0x0033)
 
-HAP_STATIC_ASSERT(kAttributeCount == 9 + 9 + 3 + 5 + 4, AttributeCount_mismatch);
+HAP_STATIC_ASSERT(kAttributeCount == 9 + 8 + 3 + 5 + 4, AttributeCount_mismatch);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -389,27 +388,6 @@ const HAPStringCharacteristic lightBulbAccessoryInformationHardwareRevisionChara
     .callbacks = { .handleRead = HAPHandleAccessoryInformationHardwareRevisionRead, .handleWrite = NULL }
 };
 
-const HAPStringCharacteristic lightBulbAccessoryInformationADKVersionCharacteristic = {
-    .format = kHAPCharacteristicFormat_String,
-    .iid = kIID_LightBulbAccessoryInformationADKVersion,
-    .characteristicType = &kHAPCharacteristicType_ADKVersion,
-    .debugDescription = kHAPCharacteristicDebugDescription_ADKVersion,
-    .manufacturerDescription = NULL,
-    .properties = { .readable = true,
-                    .writable = false,
-                    .supportsEventNotification = false,
-                    .hidden = true,
-                    .requiresTimedWrite = false,
-                    .supportsAuthorizationData = false,
-                    .ip = { .controlPoint = false, .supportsWriteResponse = false },
-                    .ble = { .supportsBroadcastNotification = false,
-                             .supportsDisconnectedNotification = false,
-                             .readableWithoutSecurity = false,
-                             .writableWithoutSecurity = false } },
-    .constraints = { .maxLength = 64 },
-    .callbacks = { .handleRead = HAPHandleAccessoryInformationADKVersionRead, .handleWrite = NULL }
-};
-
 const HAPService lightBulbAccessoryInformationService = {
     .iid = kIID_LightBulbAccessoryInformation,
     .serviceType = &kHAPServiceType_AccessoryInformation,
@@ -424,7 +402,6 @@ const HAPService lightBulbAccessoryInformationService = {
                                                             &lightBulbAccessoryInformationSerialNumberCharacteristic,
                                                             &lightBulbAccessoryInformationFirmwareRevisionCharacteristic,
                                                             &lightBulbAccessoryInformationHardwareRevisionCharacteristic,
-                                                            &lightBulbAccessoryInformationADKVersionCharacteristic,
                                                             NULL }
 };
 
