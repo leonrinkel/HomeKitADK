@@ -216,12 +216,14 @@ void AppCreate(HAPAccessoryServerRef* server, HAPPlatformKeyValueStoreRef keyVal
 void AppRelease(void) {
 }
 
+const HAPAccessory* _Nullable const* _Nullable bridgedAccessories =
+    (const HAPAccessory* const[]) { &lightBulbAccessory,
+                                    NULL };
+
 void AppAccessoryServerStart(void) {
     HAPAccessoryServerStartBridge(
         accessoryConfiguration.server, &bridgeAccessory,
-        (const HAPAccessory* const[]) { &lightBulbAccessory,
-                                        NULL },
-        true
+        bridgedAccessories, true
     );
 }
 
