@@ -53,6 +53,7 @@
 typedef struct {
     struct {
         bool lightBulbOn;
+        int  lightBulbBrightness;
     } state;
     HAPAccessoryServerRef* server;
     HAPPlatformKeyValueStoreRef keyValueStore;
@@ -180,6 +181,36 @@ HAPError HandleLightBulbOnWrite(
     HAPLogInfo(&kHAPLog_Default, "%s: %s", __func__, value ? "true" : "false");
     if (accessoryConfiguration.state.lightBulbOn != value) {
         accessoryConfiguration.state.lightBulbOn = value;
+
+        SaveAccessoryState();
+
+        HAPAccessoryServerRaiseEvent(server, request->characteristic, request->service, request->accessory);
+    }
+
+    return kHAPError_None;
+}
+
+HAP_RESULT_USE_CHECK
+HAPError HandleLightBulbBrightnessRead(
+        HAPAccessoryServerRef* server HAP_UNUSED,
+        const HAPIntCharacteristicReadRequest* request HAP_UNUSED,
+        int* value,
+        void* _Nullable context HAP_UNUSED) {
+    *value = accessoryConfiguration.state.lightBulbBrightness;
+    HAPLogInfo(&kHAPLog_Default, "%s: %d", __func__, *value);
+
+    return kHAPError_None;
+}
+
+HAP_RESULT_USE_CHECK
+HAPError HandleLightBulbBrightnessWrite(
+        HAPAccessoryServerRef* server,
+        const HAPIntCharacteristicWriteRequest* request,
+        int value,
+        void* _Nullable context HAP_UNUSED) {
+    HAPLogInfo(&kHAPLog_Default, "%s: %d", __func__, value);
+    if (accessoryConfiguration.state.lightBulbBrightness != value) {
+        accessoryConfiguration.state.lightBulbBrightness = value;
 
         SaveAccessoryState();
 

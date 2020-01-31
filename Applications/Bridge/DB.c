@@ -50,8 +50,9 @@
 #define kIID_LightBulbServiceSignature ((uint64_t) 0x0031)
 #define kIID_LightBulbName             ((uint64_t) 0x0032)
 #define kIID_LightBulbOn               ((uint64_t) 0x0033)
+#define kIID_LightBulbBrightness       ((uint64_t) 0x0034)
 
-HAP_STATIC_ASSERT(kAttributeCount == 9 + 8 + 3 + 5 + 4, AttributeCount_mismatch);
+HAP_STATIC_ASSERT(kAttributeCount == 9 + 8 + 3 + 5 + 5, AttributeCount_mismatch);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -637,6 +638,27 @@ const HAPBoolCharacteristic lightBulbOnCharacteristic = {
     .callbacks = { .handleRead = HandleLightBulbOnRead, .handleWrite = HandleLightBulbOnWrite }
 };
 
+const HAPIntCharacteristic lightBulbBrightnessCharacteristic = {
+    .format = kHAPCharacteristicFormat_Int,
+    .iid = kIID_LightBulbBrightness,
+    .characteristicType = &kHAPCharacteristicType_Brightness,
+    .debugDescription = kHAPCharacteristicDebugDescription_Brightness,
+    .manufacturerDescription = NULL,
+    .properties = { .readable = true,
+                    .writable = true,
+                    .supportsEventNotification = true,
+                    .hidden = false,
+                    .requiresTimedWrite = false,
+                    .supportsAuthorizationData = false,
+                    .ip = { .controlPoint = false, .supportsWriteResponse = false },
+                    .ble = { .supportsBroadcastNotification = true,
+                             .supportsDisconnectedNotification = true,
+                             .readableWithoutSecurity = false,
+                             .writableWithoutSecurity = false } },
+    .constraints = { .minimumValue = 0, .maximumValue = 100, .stepValue = 1 },
+    .callbacks = { .handleRead = HandleLightBulbBrightnessRead, .handleWrite = HandleLightBulbBrightnessWrite }
+};
+
 /**
  * The Light Bulb service that contains the 'On' characteristic.
  */
@@ -650,5 +672,6 @@ const HAPService lightBulbService = {
     .characteristics = (const HAPCharacteristic* const[]) { &lightBulbServiceSignatureCharacteristic,
                                                             &lightBulbNameCharacteristic,
                                                             &lightBulbOnCharacteristic,
+                                                            &lightBulbBrightnessCharacteristic,
                                                             NULL }
 };

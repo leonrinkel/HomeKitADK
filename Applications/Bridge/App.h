@@ -52,6 +52,20 @@ HAPError HandleLightBulbOnWrite(
         bool value,
         void* _Nullable context);
 
+HAP_RESULT_USE_CHECK
+HAPError HandleLightBulbBrightnessRead(
+        HAPAccessoryServerRef* server,
+        const HAPIntCharacteristicReadRequest* request,
+        int* value,
+        void* _Nullable context);
+
+HAP_RESULT_USE_CHECK
+HAPError HandleLightBulbBrightnessWrite(
+        HAPAccessoryServerRef* server,
+        const HAPIntCharacteristicWriteRequest* request,
+        int value,
+        void* _Nullable context);
+
 /**
  * Initialize the application.
  */
