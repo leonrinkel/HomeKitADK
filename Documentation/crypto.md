@@ -1,16 +1,4 @@
-# HomeKit ADK Platform Abstraction Layer (PAL)
-
-This document describes the ADK PAL and how to port the ADK to a new platform.
-
-## Supported platforms
-
-The ADK ships with existing implementations for the following platforms and cryptographic libraries:
-
-Operating systems and runtime environments
-* Darwin (macOS)
-* Linux
-
-Cryptographic libraries
+# Supported Cryptographic Libraries
 * OpenSSL (1.1.1c or later)
 * MbedTLS (2.18.0 or later)
 
@@ -247,12 +235,4 @@ void HAP_aes_ctr_init(HAP_aes_ctr_ctx *ctx, const uint8_t *key, int size, const 
 void HAP_aes_ctr_encrypt(HAP_aes_ctr_ctx *ctx, uint8_t* ct, const uint8_t* pt, size_t pt_len);
 void HAP_aes_ctr_decrypt(HAP_aes_ctr_ctx *ctx, uint8_t* pt, const uint8_t* ct, size_t ct_len);
 void HAP_aes_ctr_done(HAP_aes_ctr_ctx *ctx);
-```
-
-### Cryptographic random
-
-Cryptographically secure random data.
-
-```
-void HAP_rand(uint8_t *buffer, size_t n);
 ```
