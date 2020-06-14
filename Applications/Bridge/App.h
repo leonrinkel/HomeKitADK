@@ -35,22 +35,22 @@ HAPError IdentifyAccessory(
 /**
  * Handle read request to the 'On' characteristic of the Light Bulb service.
  */
-/*HAP_RESULT_USE_CHECK
-HAPError HandleLightBulbOnRead(
+HAP_RESULT_USE_CHECK
+HAPError HandleBridgedLightBulbOnRead(
         HAPAccessoryServerRef* server,
         const HAPBoolCharacteristicReadRequest* request,
         bool* value,
-        void* _Nullable context);*/
+        void* _Nullable context);
 
 /**
  * Handle write request to the 'On' characteristic of the Light Bulb service.
  */
-/*HAP_RESULT_USE_CHECK
-HAPError HandleLightBulbOnWrite(
+HAP_RESULT_USE_CHECK
+HAPError HandleBridgedLightBulbOnWrite(
         HAPAccessoryServerRef* server,
         const HAPBoolCharacteristicWriteRequest* request,
         bool value,
-        void* _Nullable context);*/
+        void* _Nullable context);
 
 /**
  * Initialize the application.
@@ -61,6 +61,8 @@ void AppCreate(HAPAccessoryServerRef* server, HAPPlatformKeyValueStoreRef keyVal
  * Deinitialize the application.
  */
 void AppRelease(void);
+
+HAPAccessory** bridgedAccessories;
 
 /**
  * Start the accessory server for the app.

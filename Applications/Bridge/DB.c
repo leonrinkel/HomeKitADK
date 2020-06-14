@@ -26,15 +26,15 @@
 #define kIID_BridgeAccessoryInformationADKVersion       ((uint64_t) 0x0009)
 #define kIID_BridgeAccessoryInformationProductData      ((uint64_t) 0x000A)
 
-#define kIID_LightBulbAccessoryInformation                 ((uint64_t) 0x1001)
-#define kIID_LightBulbAccessoryInformationIdentify         ((uint64_t) 0x1002)
-#define kIID_LightBulbAccessoryInformationManufacturer     ((uint64_t) 0x1003)
-#define kIID_LightBulbAccessoryInformationModel            ((uint64_t) 0x1004)
-#define kIID_LightBulbAccessoryInformationName             ((uint64_t) 0x1005)
-#define kIID_LightBulbAccessoryInformationSerialNumber     ((uint64_t) 0x1006)
-#define kIID_LightBulbAccessoryInformationFirmwareRevision ((uint64_t) 0x1007)
-#define kIID_LightBulbAccessoryInformationHardwareRevision ((uint64_t) 0x1008)
-#define kIID_LightBulbAccessoryInformationProductData      ((uint64_t) 0x100A)
+#define kIID_BridgedLightBulbAccessoryInformation                 ((uint64_t) 0x1001)
+#define kIID_BridgedLightBulbAccessoryInformationIdentify         ((uint64_t) 0x1002)
+#define kIID_BridgedLightBulbAccessoryInformationManufacturer     ((uint64_t) 0x1003)
+#define kIID_BridgedLightBulbAccessoryInformationModel            ((uint64_t) 0x1004)
+#define kIID_BridgedLightBulbAccessoryInformationName             ((uint64_t) 0x1005)
+#define kIID_BridgedLightBulbAccessoryInformationSerialNumber     ((uint64_t) 0x1006)
+#define kIID_BridgedLightBulbAccessoryInformationFirmwareRevision ((uint64_t) 0x1007)
+#define kIID_BridgedLightBulbAccessoryInformationHardwareRevision ((uint64_t) 0x1008)
+#define kIID_BridgedLightBulbAccessoryInformationProductData      ((uint64_t) 0x100A)
 
 #define kIID_HAPProtocolInformation                 ((uint64_t) 0x0010)
 #define kIID_HAPProtocolInformationServiceSignature ((uint64_t) 0x0011)
@@ -46,12 +46,12 @@
 #define kIID_PairingPairingFeatures ((uint64_t) 0x0024)
 #define kIID_PairingPairingPairings ((uint64_t) 0x0025)
 
-/*#define kIID_LightBulb                 ((uint64_t) 0x0030)
-#define kIID_LightBulbServiceSignature ((uint64_t) 0x0031)
-#define kIID_LightBulbName             ((uint64_t) 0x0032)
-#define kIID_LightBulbOn               ((uint64_t) 0x0033)*/
+#define kIID_BridgedLightBulb                 ((uint64_t) 0x0030)
+#define kIID_BridgedLightBulbServiceSignature ((uint64_t) 0x0031)
+#define kIID_BridgedLightBulbName             ((uint64_t) 0x0032)
+#define kIID_BridgedLightBulbOn               ((uint64_t) 0x0033)
 
-HAP_STATIC_ASSERT(kAttributeCount == 9 + 8 + 3 + 5, AttributeCount_mismatch);
+HAP_STATIC_ASSERT(kAttributeCount == 10 + 9 + 3 + 5 + 4, AttributeCount_mismatch);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -242,6 +242,171 @@ const HAPService bridgeAccessoryInformationService = {
 
 //----------------------------------------------------------------------------------------------------------------------
 
+const HAPBoolCharacteristic bridgedLightBulbAccessoryInformationIdentifyCharacteristic = {
+    .format = kHAPCharacteristicFormat_Bool,
+    .iid = kIID_BridgedLightBulbAccessoryInformationIdentify,
+    .characteristicType = &kHAPCharacteristicType_Identify,
+    .debugDescription = kHAPCharacteristicDebugDescription_Identify,
+    .manufacturerDescription = NULL,
+    .properties = { .readable = false,
+                    .writable = true,
+                    .supportsEventNotification = false,
+                    .hidden = false,
+                    .requiresTimedWrite = false,
+                    .supportsAuthorizationData = false,
+                    .ip = { .controlPoint = false, .supportsWriteResponse = false },
+                    .ble = { .supportsBroadcastNotification = false,
+                             .supportsDisconnectedNotification = false,
+                             .readableWithoutSecurity = false,
+                             .writableWithoutSecurity = false } },
+    .callbacks = { .handleRead = NULL, .handleWrite = HAPHandleAccessoryInformationIdentifyWrite }
+};
+
+const HAPStringCharacteristic bridgedLightBulbAccessoryInformationManufacturerCharacteristic = {
+    .format = kHAPCharacteristicFormat_String,
+    .iid = kIID_BridgedLightBulbAccessoryInformationManufacturer,
+    .characteristicType = &kHAPCharacteristicType_Manufacturer,
+    .debugDescription = kHAPCharacteristicDebugDescription_Manufacturer,
+    .manufacturerDescription = NULL,
+    .properties = { .readable = true,
+                    .writable = false,
+                    .supportsEventNotification = false,
+                    .hidden = false,
+                    .requiresTimedWrite = false,
+                    .supportsAuthorizationData = false,
+                    .ip = { .controlPoint = false, .supportsWriteResponse = false },
+                    .ble = { .supportsBroadcastNotification = false,
+                             .supportsDisconnectedNotification = false,
+                             .readableWithoutSecurity = false,
+                             .writableWithoutSecurity = false } },
+    .constraints = { .maxLength = 64 },
+    .callbacks = { .handleRead = HAPHandleAccessoryInformationManufacturerRead, .handleWrite = NULL }
+};
+
+const HAPStringCharacteristic bridgedLightBulbAccessoryInformationModelCharacteristic = {
+    .format = kHAPCharacteristicFormat_String,
+    .iid = kIID_BridgedLightBulbAccessoryInformationModel,
+    .characteristicType = &kHAPCharacteristicType_Model,
+    .debugDescription = kHAPCharacteristicDebugDescription_Model,
+    .manufacturerDescription = NULL,
+    .properties = { .readable = true,
+                    .writable = false,
+                    .supportsEventNotification = false,
+                    .hidden = false,
+                    .requiresTimedWrite = false,
+                    .supportsAuthorizationData = false,
+                    .ip = { .controlPoint = false, .supportsWriteResponse = false },
+                    .ble = { .supportsBroadcastNotification = false,
+                             .supportsDisconnectedNotification = false,
+                             .readableWithoutSecurity = false,
+                             .writableWithoutSecurity = false } },
+    .constraints = { .maxLength = 64 },
+    .callbacks = { .handleRead = HAPHandleAccessoryInformationModelRead, .handleWrite = NULL }
+};
+
+const HAPStringCharacteristic bridgedLightBulbAccessoryInformationNameCharacteristic = {
+    .format = kHAPCharacteristicFormat_String,
+    .iid = kIID_BridgedLightBulbAccessoryInformationName,
+    .characteristicType = &kHAPCharacteristicType_Name,
+    .debugDescription = kHAPCharacteristicDebugDescription_Name,
+    .manufacturerDescription = NULL,
+    .properties = { .readable = true,
+                    .writable = false,
+                    .supportsEventNotification = false,
+                    .hidden = false,
+                    .requiresTimedWrite = false,
+                    .supportsAuthorizationData = false,
+                    .ip = { .controlPoint = false, .supportsWriteResponse = false },
+                    .ble = { .supportsBroadcastNotification = false,
+                             .supportsDisconnectedNotification = false,
+                             .readableWithoutSecurity = false,
+                             .writableWithoutSecurity = false } },
+    .constraints = { .maxLength = 64 },
+    .callbacks = { .handleRead = HAPHandleAccessoryInformationNameRead, .handleWrite = NULL }
+};
+
+const HAPStringCharacteristic bridgedLightBulbAccessoryInformationSerialNumberCharacteristic = {
+    .format = kHAPCharacteristicFormat_String,
+    .iid = kIID_BridgedLightBulbAccessoryInformationSerialNumber,
+    .characteristicType = &kHAPCharacteristicType_SerialNumber,
+    .debugDescription = kHAPCharacteristicDebugDescription_SerialNumber,
+    .manufacturerDescription = NULL,
+    .properties = { .readable = true,
+                    .writable = false,
+                    .supportsEventNotification = false,
+                    .hidden = false,
+                    .requiresTimedWrite = false,
+                    .supportsAuthorizationData = false,
+                    .ip = { .controlPoint = false, .supportsWriteResponse = false },
+                    .ble = { .supportsBroadcastNotification = false,
+                             .supportsDisconnectedNotification = false,
+                             .readableWithoutSecurity = false,
+                             .writableWithoutSecurity = false } },
+    .constraints = { .maxLength = 64 },
+    .callbacks = { .handleRead = HAPHandleAccessoryInformationSerialNumberRead, .handleWrite = NULL }
+};
+
+const HAPStringCharacteristic bridgedLightBulbAccessoryInformationFirmwareRevisionCharacteristic = {
+    .format = kHAPCharacteristicFormat_String,
+    .iid = kIID_BridgedLightBulbAccessoryInformationFirmwareRevision,
+    .characteristicType = &kHAPCharacteristicType_FirmwareRevision,
+    .debugDescription = kHAPCharacteristicDebugDescription_FirmwareRevision,
+    .manufacturerDescription = NULL,
+    .properties = { .readable = true,
+                    .writable = false,
+                    .supportsEventNotification = false,
+                    .hidden = false,
+                    .requiresTimedWrite = false,
+                    .supportsAuthorizationData = false,
+                    .ip = { .controlPoint = false, .supportsWriteResponse = false },
+                    .ble = { .supportsBroadcastNotification = false,
+                             .supportsDisconnectedNotification = false,
+                             .readableWithoutSecurity = false,
+                             .writableWithoutSecurity = false } },
+    .constraints = { .maxLength = 64 },
+    .callbacks = { .handleRead = HAPHandleAccessoryInformationFirmwareRevisionRead, .handleWrite = NULL }
+};
+
+const HAPStringCharacteristic bridgedLightBulbAccessoryInformationHardwareRevisionCharacteristic = {
+    .format = kHAPCharacteristicFormat_String,
+    .iid = kIID_BridgedLightBulbAccessoryInformationHardwareRevision,
+    .characteristicType = &kHAPCharacteristicType_HardwareRevision,
+    .debugDescription = kHAPCharacteristicDebugDescription_HardwareRevision,
+    .manufacturerDescription = NULL,
+    .properties = { .readable = true,
+                    .writable = false,
+                    .supportsEventNotification = false,
+                    .hidden = false,
+                    .requiresTimedWrite = false,
+                    .supportsAuthorizationData = false,
+                    .ip = { .controlPoint = false, .supportsWriteResponse = false },
+                    .ble = { .supportsBroadcastNotification = false,
+                             .supportsDisconnectedNotification = false,
+                             .readableWithoutSecurity = false,
+                             .writableWithoutSecurity = false } },
+    .constraints = { .maxLength = 64 },
+    .callbacks = { .handleRead = HAPHandleAccessoryInformationHardwareRevisionRead, .handleWrite = NULL }
+};
+
+const HAPService bridgedLightBulbAccessoryInformationService = {
+    .iid = kIID_BridgedLightBulbAccessoryInformation,
+    .serviceType = &kHAPServiceType_AccessoryInformation,
+    .debugDescription = kHAPServiceDebugDescription_AccessoryInformation,
+    .name = NULL,
+    .properties = { .primaryService = false, .hidden = false, .ble = { .supportsConfiguration = false } },
+    .linkedServices = NULL,
+    .characteristics = (const HAPCharacteristic* const[]) { &bridgedLightBulbAccessoryInformationIdentifyCharacteristic,
+                                                            &bridgedLightBulbAccessoryInformationManufacturerCharacteristic,
+                                                            &bridgedLightBulbAccessoryInformationModelCharacteristic,
+                                                            &bridgedLightBulbAccessoryInformationNameCharacteristic,
+                                                            &bridgedLightBulbAccessoryInformationSerialNumberCharacteristic,
+                                                            &bridgedLightBulbAccessoryInformationFirmwareRevisionCharacteristic,
+                                                            &bridgedLightBulbAccessoryInformationHardwareRevisionCharacteristic,
+                                                            NULL }
+};
+
+//----------------------------------------------------------------------------------------------------------------------
+
 static const HAPDataCharacteristic hapProtocolInformationServiceSignatureCharacteristic = {
     .format = kHAPCharacteristicFormat_Data,
     .iid = kIID_HAPProtocolInformationServiceSignature,
@@ -404,9 +569,9 @@ const HAPService pairingService = {
 /**
  * The 'Service Signature' characteristic of the Light Bulb service.
  */
-/*static const HAPDataCharacteristic lightBulbServiceSignatureCharacteristic = {
+static const HAPDataCharacteristic bridgedLightBulbServiceSignatureCharacteristic = {
     .format = kHAPCharacteristicFormat_Data,
-    .iid = kIID_LightBulbServiceSignature,
+    .iid = kIID_BridgedLightBulbServiceSignature,
     .characteristicType = &kHAPCharacteristicType_ServiceSignature,
     .debugDescription = kHAPCharacteristicDebugDescription_ServiceSignature,
     .manufacturerDescription = NULL,
@@ -423,14 +588,14 @@ const HAPService pairingService = {
                              .writableWithoutSecurity = false } },
     .constraints = { .maxLength = 2097152 },
     .callbacks = { .handleRead = HAPHandleServiceSignatureRead, .handleWrite = NULL }
-};*/
+};
 
 /**
  * The 'Name' characteristic of the Light Bulb service.
  */
-/*static const HAPStringCharacteristic lightBulbNameCharacteristic = {
+static const HAPStringCharacteristic bridgedLightBulbNameCharacteristic = {
     .format = kHAPCharacteristicFormat_String,
-    .iid = kIID_LightBulbName,
+    .iid = kIID_BridgedLightBulbName,
     .characteristicType = &kHAPCharacteristicType_Name,
     .debugDescription = kHAPCharacteristicDebugDescription_Name,
     .manufacturerDescription = NULL,
@@ -447,14 +612,14 @@ const HAPService pairingService = {
                              .writableWithoutSecurity = false } },
     .constraints = { .maxLength = 64 },
     .callbacks = { .handleRead = HAPHandleNameRead, .handleWrite = NULL }
-};*/
+};
 
 /**
  * The 'On' characteristic of the Light Bulb service.
  */
-/*const HAPBoolCharacteristic lightBulbOnCharacteristic = {
+const HAPBoolCharacteristic bridgedLightBulbOnCharacteristic = {
     .format = kHAPCharacteristicFormat_Bool,
-    .iid = kIID_LightBulbOn,
+    .iid = kIID_BridgedLightBulbOn,
     .characteristicType = &kHAPCharacteristicType_On,
     .debugDescription = kHAPCharacteristicDebugDescription_On,
     .manufacturerDescription = NULL,
@@ -469,21 +634,21 @@ const HAPService pairingService = {
                              .supportsDisconnectedNotification = true,
                              .readableWithoutSecurity = false,
                              .writableWithoutSecurity = false } },
-    .callbacks = { .handleRead = HandleLightBulbOnRead, .handleWrite = HandleLightBulbOnWrite }
-};*/
+    .callbacks = { .handleRead = HandleBridgedLightBulbOnRead, .handleWrite = HandleBridgedLightBulbOnWrite }
+};
 
 /**
  * The Light Bulb service that contains the 'On' characteristic.
  */
-/*const HAPService lightBulbService = {
-    .iid = kIID_LightBulb,
+const HAPService bridgedLightBulbService = {
+    .iid = kIID_BridgedLightBulb,
     .serviceType = &kHAPServiceType_LightBulb,
     .debugDescription = kHAPServiceDebugDescription_LightBulb,
     .name = "Light Bulb",
     .properties = { .primaryService = true, .hidden = false, .ble = { .supportsConfiguration = false } },
     .linkedServices = NULL,
-    .characteristics = (const HAPCharacteristic* const[]) { &lightBulbServiceSignatureCharacteristic,
-                                                            &lightBulbNameCharacteristic,
-                                                            &lightBulbOnCharacteristic,
+    .characteristics = (const HAPCharacteristic* const[]) { &bridgedLightBulbServiceSignatureCharacteristic,
+                                                            &bridgedLightBulbNameCharacteristic,
+                                                            &bridgedLightBulbOnCharacteristic,
                                                             NULL }
-};*/
+};

@@ -21,6 +21,8 @@
 #endif
 
 #include <signal.h>
+#include <stdio.h>
+
 static bool requestedFactoryReset = false;
 static bool clearPairings = false;
 
@@ -277,7 +279,98 @@ static void InitializeBLE() {
 }
 #endif
 
+// trigger with: kill -USR1 $pid
+void sigusr1_handler(int _) {
+    if (bridgedAccessories == NULL) {
+        printf("no bridged accessories\n");
+        return;
+    }
+
+    printf("listing accessories:\n");
+    for (HAPAccessory** iterator = bridgedAccessories; *iterator != NULL; iterator++) {
+        printf("aid: %llu, name: %s\n", (*iterator)->aid, (*iterator)->name);
+    }
+}
+
+HAPPlatformTimerRef check_server_state_and_update_timer;
+
+static void check_server_state_and_update(HAPPlatformTimerRef timer, void* _Nullable context) {
+    // is the server still not idle?
+    if (HAPAccessoryServerGetState(&accessoryServer) != kHAPAccessoryServerState_Idle) {
+        // restart timer
+        (void) HAPPlatformTimerRegister(&check_server_state_and_update_timer,
+            HAPPlatformClockGetCurrent() + 1 * HAPMillisecond, check_server_state_and_update, NULL);
+        return;
+    }
+
+    // count existing accessories
+    int bridgedAccessoriesCount = 0;
+    for (HAPAccessory** iterator = bridgedAccessories; iterator != NULL && *iterator != NULL; iterator++)
+        bridgedAccessoriesCount++;
+
+    // new accesory
+    HAPAccessory* bridgedLightBulbAccessory = (HAPAccessory*) malloc(sizeof(HAPAccessory));
+    bridgedLightBulbAccessory->aid = bridgedAccessoriesCount + 2;
+    bridgedLightBulbAccessory->category = kHAPAccessoryCategory_BridgedAccessory;
+    bridgedLightBulbAccessory->name = "Acme Light Bulb";
+    bridgedLightBulbAccessory->manufacturer = "Acme";
+    bridgedLightBulbAccessory->model = "LightBulb1,1";
+    bridgedLightBulbAccessory->serialNumber = "ABCDEFGH0002";
+    bridgedLightBulbAccessory->firmwareVersion = "1";
+    bridgedLightBulbAccessory->hardwareVersion = "1";
+    bridgedLightBulbAccessory->callbacks.identify = IdentifyAccessory;
+
+    HAPService** bridgedLightBulbAccessoryServices =
+        (HAPService**) malloc(sizeof(HAPService*) * 3);
+    *(bridgedLightBulbAccessoryServices + 0) =
+        (HAPService*) &bridgedLightBulbAccessoryInformationService;
+    *(bridgedLightBulbAccessoryServices + 1) =
+        (HAPService*) &bridgedLightBulbService;
+    *(bridgedLightBulbAccessoryServices + 2) = NULL;
+
+    bridgedLightBulbAccessory->services =
+        (const struct HAPService *const *) bridgedLightBulbAccessoryServices;
+
+    // alloc mem for bridged accessories list
+    if (bridgedAccessoriesCount == 0)
+        bridgedAccessories = (HAPAccessory**) malloc(sizeof(HAPAccessory*) * 2);
+    else
+        bridgedAccessories = (HAPAccessory**) realloc(
+            bridgedAccessories, sizeof(HAPAccessory*) * (bridgedAccessoriesCount + 2));
+
+    // append list
+    *(bridgedAccessories + (bridgedAccessoriesCount + 0)) = bridgedLightBulbAccessory;
+    *(bridgedAccessories + (bridgedAccessoriesCount + 1)) = NULL;
+
+    bridgedAccessoriesCount++;
+    printf("added bridged accessory with aid: %d\n", bridgedAccessoriesCount + 1);
+
+    // finally start server again
+    AppAccessoryServerStart();
+}
+
+// trigger with: kill -USR2 $pid
+void sigusr2_handler(int _) {
+    // stopping the server takes time
+    
+    // also if the server is started immediatly after stopping,
+    // the mdns port may still be allocated and advertising will fail.
+    
+    // waiting 5 seconds is probably not the best way to solve this.
+    // i remember there was some flag (probably SO_REUSEADDR),
+    // that solved this kind of issues, will have to look into it.
+    
+    (void) HAPPlatformTimerRegister(&check_server_state_and_update_timer,
+        HAPPlatformClockGetCurrent() + 5 * HAPSecond, check_server_state_and_update, NULL);
+
+    // ask the server to stop
+    HAPAccessoryServerStop(&accessoryServer);
+}
+
 int main(int argc, char* _Nullable argv[_Nullable]) {
+    signal(SIGUSR1, sigusr1_handler);
+    signal(SIGUSR2, sigusr2_handler);
+
     HAPAssert(HAPGetCompatibilityVersion() == HAP_COMPATIBILITY_VERSION);
 
     // Initialize global platform objects.

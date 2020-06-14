@@ -145,35 +145,35 @@ HAPError IdentifyAccessory(
     return kHAPError_None;
 }
 
-/*HAP_RESULT_USE_CHECK
-HAPError HandleLightBulbOnRead(
+HAP_RESULT_USE_CHECK
+HAPError HandleBridgedLightBulbOnRead(
         HAPAccessoryServerRef* server HAP_UNUSED,
         const HAPBoolCharacteristicReadRequest* request HAP_UNUSED,
         bool* value,
         void* _Nullable context HAP_UNUSED) {
-    *value = accessoryConfiguration.state.lightBulbOn;
+    //*value = accessoryConfiguration.state.lightBulbOn;
     HAPLogInfo(&kHAPLog_Default, "%s: %s", __func__, *value ? "true" : "false");
 
     return kHAPError_None;
-}*/
+}
 
-/*HAP_RESULT_USE_CHECK
-HAPError HandleLightBulbOnWrite(
+HAP_RESULT_USE_CHECK
+HAPError HandleBridgedLightBulbOnWrite(
         HAPAccessoryServerRef* server,
         const HAPBoolCharacteristicWriteRequest* request,
         bool value,
         void* _Nullable context HAP_UNUSED) {
     HAPLogInfo(&kHAPLog_Default, "%s: %s", __func__, value ? "true" : "false");
-    if (accessoryConfiguration.state.lightBulbOn != value) {
+    /*if (accessoryConfiguration.state.lightBulbOn != value) {
         accessoryConfiguration.state.lightBulbOn = value;
 
         SaveAccessoryState();
 
         HAPAccessoryServerRaiseEvent(server, request->characteristic, request->service, request->accessory);
-    }
+    }*/
 
     return kHAPError_None;
-}*/
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -202,10 +202,13 @@ void AppCreate(HAPAccessoryServerRef* server, HAPPlatformKeyValueStoreRef keyVal
 void AppRelease(void) {
 }
 
+HAPAccessory** bridgedAccessories = NULL;
+
 void AppAccessoryServerStart(void) {
     HAPAccessoryServerStartBridge(
         accessoryConfiguration.server, &bridgeAccessory,
-        NULL, true
+        // unsafe casting blablabla
+        (const HAPAccessory *const  _Nullable * _Nullable) bridgedAccessories, true
     );
 }
 

@@ -23,7 +23,7 @@ extern "C" {
 /**
  * Total number of services and characteristics contained in the accessory.
  */
-#define kAttributeCount ((size_t) 25)
+#define kAttributeCount ((size_t) 31)
 
 /**
  * HomeKit Accessory Information service.
@@ -42,6 +42,8 @@ extern const HAPStringCharacteristic bridgeAccessoryInformationFirmwareRevisionC
 extern const HAPStringCharacteristic bridgeAccessoryInformationHardwareRevisionCharacteristic;
 extern const HAPStringCharacteristic bridgeAccessoryInformationADKVersionCharacteristic;
 
+extern const HAPService bridgedLightBulbAccessoryInformationService;
+
 /**
  * HAP Protocol Information service.
  */
@@ -55,12 +57,12 @@ extern const HAPService pairingService;
 /**
  * Light Bulb service.
  */
-//extern const HAPService lightBulbService;
+extern const HAPService bridgedLightBulbService;
 
 /**
  * The 'On' characteristic of the Light Bulb service.
  */
-//extern const HAPBoolCharacteristic lightBulbOnCharacteristic;
+extern const HAPBoolCharacteristic bridgedLightBulbOnCharacteristic;
 
 #if __has_feature(nullability)
 #pragma clang assume_nonnull end
